@@ -1,12 +1,20 @@
-from .constants import TIPO_CONTA
+from .constants import ACCOUNT_TYPE
 
-class Conta():
+class User():
 
-    def __init__(self, nome, saldo, tipo):
+    def __init__(self, name, email_login, password):
         
-        self.nome = nome
-        self.saldo = saldo
-        self.tipo = TIPO_CONTA[tipo]
+        self.name = name
+        self.email_login = email_login
+        self.password = password
+
+class Account():
+
+    def __init__(self, name, balance, account_type_key):
+        
+        self.name = name
+        self.balance = balance
+        self.account_type = ACCOUNT_TYPE[account_type_key]
     
-    def conta(self):
-        print(self.nome, self.saldo, self.tipo)
+    def display_account(self):
+        print(self.name, self.balance, self.account_type)
