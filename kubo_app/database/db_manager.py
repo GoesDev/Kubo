@@ -1,5 +1,4 @@
-import sqlite3, os
-from core.constants import DB_FILE, SQL_CREATE_USERS_TABLE, SQL_INSERT_INTO_USERS
+import sqlite3
 
 def connect_db(db_file: str):
     """
@@ -62,6 +61,7 @@ def insert_into(conn, sql: str, data: tuple):
 
         sql (str): string com o código SQL a ser executado.
 
+    Returns:
         data (tuple): tupla com os dados a serem inseridos.
     """
 
@@ -71,10 +71,39 @@ def insert_into(conn, sql: str, data: tuple):
     cursor.execute(sql, data)
     conn.commit()
 
-conexao = connect_db(DB_FILE)
+def select_all(conn, sql: str) -> tuple:
+    """
+    Faz uma busca e retorna todos os valores de uma determinada
+    tabela no banco de dados.
 
-if conexao:
-    pass
-    # create_table(conexao, SQL_CREATE_USERS_TABLE)
-    # user = ('Duarda', 'duarda.@gmail.com', '664hh')
-    # user_1 = insert_into(conexao, SQL_INSERT_INTO_USERS, user)
+    Args:
+        conn (sqlite3.Connection): Objeto de conexão com o banco de dados
+
+        sql (str): string com o código SQL a ser executado.
+
+        all_data (tuple): tupla com todas as linhas da tabela.
+    """
+    # Cria um cursor através da conexão com o banco de dados, e em seguida
+    # executa o código SQL buscando todas linhas da tabela.
+    cursor = conn.cursor()
+    cursor.execute(sql)
+    all_data = cursor.fetchall()
+
+    return all_data
+
+def delete_by_id(conn, sql: str, id: str):
+    """
+    Deleta uma linha da tabela no banco de dados.
+    
+    Args:
+        conn (sqlite3.Connection): Objeto de conexão com o banco de dados
+
+        sql (str): string com o código SQL a ser executado.
+
+        id (str): variável com o valor de identificação da linha a ser excluida.
+    """
+    # Cria um cursor através da conexão com o banco de dados, e em seguida
+    # executa o código SQL excluindo uma linha pelo seu 'id'.
+    cursor = conn.cursor()
+    cursor.execute(sql, (id,))
+    conn.commit()

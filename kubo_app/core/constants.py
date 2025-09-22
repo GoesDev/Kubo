@@ -9,3 +9,7 @@ SQL_CREATE_USERS_TABLE = """CREATE TABLE IF NOT EXISTS users (
 id INTEGER PRIMARY KEY, name TEXT NOT NULL, email_login TEXT NOT NULL, password TEXT NOT NULL)"""
 
 SQL_INSERT_INTO_USERS = """INSERT INTO users (name, email_login, password) VALUES (?, ?, ?)"""
+
+SQL_SELECT_ALL_USERS = """SELECT id, name, email_login, password FROM users"""
+
+SQL_DELETE_USERS_BY_ID = """DELETE FROM users WHERE id = ?"""
