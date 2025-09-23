@@ -1,9 +1,9 @@
 import re
 import bcrypt
-from core.constants import SQL_INSERT_INTO_USERS, DB_FILE
-from database.db_manager import insert_into, connect_db
+from core.constants import SQL_INSERT_INTO_USERS, DB_FILE, SQL_SELECT_USERS_BY_EMAIL
+from database.db_manager import insert_into, connect_db, select_one_row
 
-EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
+EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.([a-zA-Z]{2,})(\.[a-zA-Z]{2,})?$')
 
 PASSWORD_REGEX = re.compile(
     r'^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$'
@@ -90,6 +90,8 @@ def validade_new_user(name: str, email: str, password: str) -> str:
         return "Email inválido"
     elif password_ok is False:
         return "Senha inválida"
+    elif select_one_row(connect_db(DB_FILE), SQL_SELECT_USERS_BY_EMAIL, email) is not None:
+        return 'Já tem um usuário com esse email'
     else:
         hashed_password = hash_password(password)
 
@@ -98,3 +100,16 @@ def validade_new_user(name: str, email: str, password: str) -> str:
         # uma tupla, fornce os dados do usuário
         insert_into(connect_db(DB_FILE), SQL_INSERT_INTO_USERS, (name, email, hashed_password))
         return "Cadastrando Novo Usuário"
+
+def validate_login_email(email: str, password: str):
+    """
+    Verifica se o email existe na base de dados
+    """
+    user = select_one_row(connect_db(DB_FILE), SQL_SELECT_USERS_BY_EMAIL, email)
+
+    if user is None:
+        return 'Email não encontrado'
+    else:
+        check_user_password = check_password(password, user[1])
+        return check_user_password
+
