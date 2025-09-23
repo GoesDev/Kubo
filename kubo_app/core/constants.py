@@ -14,6 +14,8 @@ SQL_INSERT_INTO_USERS = """INSERT INTO users (name, email_login, password) VALUE
 
 SQL_SELECT_ALL_USERS = """SELECT name, email_login, password FROM users"""
 
+SQL_SELECT_USERS_BY_EMAIL = """SELECT name, password FROM users WHERE email_login = ?"""
+
 SQL_DELETE_USERS_BY_ID = """DELETE FROM users WHERE id = ?"""
 
 #------------------------------------------------------------------------
