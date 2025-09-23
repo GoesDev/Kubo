@@ -1,5 +1,7 @@
 import re
 import bcrypt
+from core.constants import SQL_INSERT_INTO_USERS, DB_FILE
+from database.db_manager import insert_into, connect_db
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$')
 
@@ -67,3 +69,32 @@ def check_password(password_to_check: str, hashed_password: bytes) -> bool:
 
     password_bytes_to_check = password_to_check.encode('utf-8')
     return bcrypt.checkpw(password_bytes_to_check, hashed_password)
+
+def validade_new_user(name: str, email: str, password: str) -> str:
+    """
+    Recebe o nome, email e senha de um novo usuário, chama as funções de validação
+    caso as informações sejam válidas, os dados são enviados para registro no banco
+
+    Args:
+        name (str): nome do novo usuário
+        email (str): email do novo usuário, irá passar por uma validação
+        password (str): senha do novo usuário, irá passar por uma validação
+    """
+    
+    # Valida as informações de email e senha, caso ambas sejam verdadeiras
+    # um novo usuário é cadastro na tabela user
+
+    email_ok = validate_email(email)
+    password_ok = validate_password(password)
+    if email_ok is False:
+        return "Email inválido"
+    elif password_ok is False:
+        return "Senha inválida"
+    else:
+        hashed_password = hash_password(password)
+
+        # Cria a conexão com o banco, usando o caminho contido em DB_file
+        # usa o código de insert into contido em SQL_INSERT_INTO_USERS e
+        # uma tupla, fornce os dados do usuário
+        insert_into(connect_db(DB_FILE), SQL_INSERT_INTO_USERS, (name, email, hashed_password))
+        return "Cadastrando Novo Usuário"
