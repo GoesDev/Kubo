@@ -1,22 +1,5 @@
-from core.models import Conta
-import os
+from flask import Flask, render_template, request
+from routes import app
 
-nova_conta = Conta('Nubank', 1000, 0)
-
-nova_conta.conta()
-
-cond = True
-
-while cond:
-    os.system('cls')
-
-    print('Vamos criar uma Conta')
-    resposta = input('s ou n\n-- ')
-    if resposta == 's':
-        pass
-    elif resposta == 'n':
-        cond = False
-    else:
-        print('Resposta Inválida')
-
-
+if __name__ == '__main__':
+    app.run(debug=True)
