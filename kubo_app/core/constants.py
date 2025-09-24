@@ -30,3 +30,30 @@ color) VALUES (?, ?, ?, ?)"""
 SQL_SELECT_ALL_ACCOUNTS = """SELECT name, type, current_balance, color FROM accounts"""
 
 SQL_DELETE_ACCOUNTS_BY_ID = """DELETE FROM accounts WHERE id = ?"""
+
+#------------------------------------------------------------------------
+
+SQL_CREATE_TRANSACTIONS_TABLE = """CREATE TABLE IF NOT EXISTS transactions (
+    id INTEGER PRIMARY KEY,
+    amount REAL NOT NULL,
+    type TEXT CHECK (type IN ('income', 'expense', 'transfer')),
+    date DATETIME NOT NULL,
+    description TEXT,
+    user_id INTEGER NOT NULL,
+    account_id INTEGER NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES users(id),
+    FOREIGN KEY (account_id) REFERENCES accounts(id)
+)"""
+
+SQL_INSERT_INTO_TRANSACTIONS = """INSERT INTO transactions (
+amount,
+type,
+date, 
+description,
+user_id,
+account_id
+) VALUES (?, ?, ?, ?, ?, ?)"""
+
+SQL_SELECT_ALL_TRANSACTIONS = """SELECT name, type, current_balance, color FROM transactions"""
+
+SQL_DELETE_TRANSACTIONS_BY_ID = """DELETE FROM transactions WHERE id = ?"""
