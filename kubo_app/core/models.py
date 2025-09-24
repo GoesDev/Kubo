@@ -13,7 +13,7 @@ class Account():
     def __init__(self, name, balance, account_type_key):
         
         self.name = name
-        self.balance = balance
+        self.current_balance = balance
         self.account_type = ACCOUNT_TYPE[account_type_key]
     
     def display_account(self):

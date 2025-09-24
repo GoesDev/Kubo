@@ -91,6 +91,26 @@ def select_all(conn, sql: str) -> tuple:
 
     return all_data
 
+def select_one_row(conn, sql: str, email: str) -> tuple:
+    """
+    Faz uma busca e retorna todos os valores de uma determinada
+    tabela no banco de dados.
+
+    Args:
+        conn (sqlite3.Connection): Objeto de conexão com o banco de dados
+
+        sql (str): string com o código SQL a ser executado.
+
+        all_data (tuple): tupla com todas as linhas da tabela.
+    """
+    # Cria um cursor através da conexão com o banco de dados, e em seguida
+    # executa o código SQL buscando uma linha na tabela que corresponda ao email.
+    cursor = conn.cursor()
+    cursor.execute(sql, (email,))
+    one_row_data = cursor.fetchone()
+
+    return one_row_data
+
 def delete_by_id(conn, sql: str, id: str):
     """
     Deleta uma linha da tabela no banco de dados.
