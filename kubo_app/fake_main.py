@@ -1,11 +1,26 @@
-from core.auth_manager import validade_new_user, validate_login_email
+# from core.auth_manager import validade_new_user, validate_login_email
+# from database.db_manager import create_table, connect_db
+# from core.constants import SQL_CREATE_TRANSACTIONS_TABLE, DB_FILE
 
-resultado = validade_new_user('Usuário', 'emaul@email.com.br.net', 'P@ssw0rd')
-print(resultado)
+from core.auth_manager import login_user
 
-result = validate_login_email('email@email.com.br', 'P@ssw0rd')
+# Tentativa de login informando apenas email e senha
+user = login_user('teste@teste.com', 'T3st@e123')
 
-print(result)
+if user is None: # Busca o email, se não achar fica vazio
+    print('Não tem um usuário com esse email')
+elif user is False: # Bate a senha informada com a salva,
+                    # se não bater, retorna False
+    print('Senha inválida')
+else: # Se estiverok, cria o objeto user, com nome, email etc
+    print(user.name, 'logado com sucesso')
+
+# resultado = validade_new_user('Usuário', 'emaul@email.com.br.net', 'P@ssw0rd')
+# print(resultado)
+
+# result = validate_login_email('email@email.com.br', 'P@ssw0rd')
+
+# print(result)
 
 
 # for i in range(11):
@@ -21,7 +36,7 @@ print(result)
 # delete_by_id(conexao, SQL_DELETE_ACCOUNTS_BY_ID, '1')
 
 
-# create_table(conexao, SQL_CREATE_ACCOUNTS_TABLE)
+# create_table(connect_db(DB_FILE), SQL_CREATE_TRANSACTIONS_TABLE)
 
 
 # all_accounts = select_all(conexao, SQL_SELECT_ALL_ACCOUNTS)
