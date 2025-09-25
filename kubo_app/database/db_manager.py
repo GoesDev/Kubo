@@ -1,4 +1,5 @@
 import sqlite3
+from core.constants import SQL_SELECT_USER_BY_EMAIL
 
 def connect_db(db_file: str):
     """
@@ -127,3 +128,26 @@ def delete_by_id(conn, sql: str, id: str):
     cursor = conn.cursor()
     cursor.execute(sql, (id,))
     conn.commit()
+
+def get_user_by_email(conn, email: str) -> tuple:
+    """
+    Busca e retorna os dados de um único usuário na tabela 'users' 
+    com base no email fornecido.
+
+    Args:
+        conn (sqlite3.Connection): Objeto de conexão com o banco de dados.
+        email (str): O endereço de email do usuário a ser buscado.
+
+    Returns:
+        tuple or None: Uma tupla contendo (id, email, password_hash) do usuário,
+                       ou None se nenhum usuário for encontrado.
+    """
+    # Usa o email como parâmetro para o WHERE.
+    cursor = conn.cursor()
+    cursor.execute(SQL_SELECT_USER_BY_EMAIL, (email,))
+    
+    # Busca o Resultado
+    user_data = cursor.fetchone()
+
+    # user_data será uma tupla (id, email, password_hash) ou None.
+    return user_data
