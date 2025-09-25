@@ -1,7 +1,8 @@
 import re
 import bcrypt
-from core.constants import SQL_INSERT_INTO_USERS, DB_FILE, SQL_SELECT_USERS_BY_EMAIL
-from database.db_manager import insert_into, connect_db, select_one_row
+from core.constants import SQL_INSERT_INTO_USERS, DB_FILE, SQL_SELECT_USER_BY_EMAIL
+from database.db_manager import insert_into, connect_db, select_one_row, get_user_by_email
+from core.models import User
 
 EMAIL_REGEX = re.compile(r'^[a-zA-Z0-9._-]+@[a-zA-Z0-9.-]+\.([a-zA-Z]{2,})(\.[a-zA-Z]{2,})?$')
 
@@ -70,7 +71,7 @@ def check_password(password_to_check: str, hashed_password: bytes) -> bool:
     password_bytes_to_check = password_to_check.encode('utf-8')
     return bcrypt.checkpw(password_bytes_to_check, hashed_password)
 
-def validade_new_user(name: str, email: str, password: str) -> str:
+def register_new_user(name: str, email: str, password: str) -> str:
     """
     Recebe o nome, email e senha de um novo usuário, chama as funções de validação
     caso as informações sejam válidas, os dados são enviados para registro no banco
@@ -90,7 +91,7 @@ def validade_new_user(name: str, email: str, password: str) -> str:
         return "Email inválido"
     elif password_ok is False:
         return "Senha inválida"
-    elif select_one_row(connect_db(DB_FILE), SQL_SELECT_USERS_BY_EMAIL, email) is not None:
+    elif select_one_row(connect_db(DB_FILE), SQL_SELECT_USER_BY_EMAIL, email) is not None:
         return 'Já tem um usuário com esse email'
     else:
         hashed_password = hash_password(password)
@@ -101,15 +102,38 @@ def validade_new_user(name: str, email: str, password: str) -> str:
         insert_into(connect_db(DB_FILE), SQL_INSERT_INTO_USERS, (name, email, hashed_password))
         return "Cadastrando Novo Usuário"
 
-def validate_login_email(email: str, password: str):
+def login_user(email: str, password: str):
     """
-    Verifica se o email existe na base de dados
-    """
-    user = select_one_row(connect_db(DB_FILE), SQL_SELECT_USERS_BY_EMAIL, email)
+    Realiza a validação de um novo login na plataforma.
 
-    if user is None:
-        return 'Email não encontrado'
+    Args:
+        email (str): Email do usuário, usado para buscar no banco de dados.
+        senha (str): Senha do usuário. É realizado um check para verificar se a
+            senha corresponde ao hash armazenado no banco de dados.
+
+    Returns:
+        None: Se não houver um usuário com o email fornecido no banco de dados.
+        False: Se a senha estiver incorreta.
+        user (User): A classe de usuário, se o login for bem-sucedido.
+    """
+    # Solicita uma busca no banco do email fornecido para login
+    user_data = get_user_by_email(connect_db(DB_FILE), email)
+
+    # Se não existir um usuário com esse email, retorna None
+    if user_data is None:
+        return None
     else:
-        check_user_password = check_password(password, user[1])
-        return check_user_password
+
+        # Faz um check se a senha bate com o hash salvo no perfil do usuário
+        user_id, user_email, password_hash = user_data
+        check_user_password = check_password(password, password_hash)
+
+        # Se a senha bater, devolve o usuário com o login ativo
+        if check_user_password is True:
+            user = User(user_id, user_email, password_hash)
+            return user
+        
+        # Se não bater, devolve False e impede o login na plataforma
+        else:
+            return False
 

@@ -2,11 +2,12 @@ from .constants import ACCOUNT_TYPE
 
 class User():
 
-    def __init__(self, name, email_login, password):
+    def __init__(self, name, email, password):
         
         self.name = name
-        self.email_login = email_login
+        self.email = email
         self.password = password
+        self.login_mode = 'online'
 
 class Account():
 
