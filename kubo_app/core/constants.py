@@ -39,6 +39,7 @@ SQL_SELECT_ALL_USERS = """
 SQL_SELECT_USER_BY_EMAIL = """
     SELECT
         name,
+        email_login,
         password
     FROM
         users
